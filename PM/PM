@@ -1,13 +1,56 @@
 --check if http is enabled.
 if not http then
-printError("Http is disabled,please set http_enable to true in ComputerCraft.cfg")
-return
+    printError("Http is disabled,please set http_enable to true in ComputerCraft.cfg")
+    return
 end
 
-local url = "https://raw.githubusercontent.com/wuxiangdong/Test/master/"
+local url = "https://raw.githubusercontent.com/wuxiangdong/PMrero/master/"
 local index = {} --programs
 local need = {}
 
+local function init()
+    local text
+    --load index
+    local response = http.get(url .. "index")
+    if not response then 
+        printError("Get index unsuccessfully")
+        return false 
+    end
+    text = response.readLine()
+    while text ~= EOF do
+        index[text] = true
+        text = response.readLine()
+    end
+    print("Get index successfully")
+    response.close()
+    print("Try input \"help\"")
+    return true
+end
+    
+    if not init() then
+        printError("Init error")
+        return
+    end
 
-
+local function install(name)
+    if(index[name]) then 
+        local response = http.get(url .. name .. "/need")
+        local text = response.readLine()
+        while text ~= EOF do 
+            if not install (text) then
+                printError("Install unsuccessfully.Dependency of " .. name .. "can't install.")
+                return false
+            end
+            text = response.readLine()
+        end
+        response.close()
+        response = http.get(url .. name .. "/" .. name)
+        local f = fs.open(name, "w")
+        f.write(response.readAll())
+        f.close()
+        response.close()
+        return true
+        
+    end
+end
 --Not finsh
