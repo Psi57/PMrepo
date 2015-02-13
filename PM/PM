@@ -1,0 +1,13 @@
+--check if http is enabled.
+if not http then
+printError("Http is disabled,please set http_enable to true in ComputerCraft.cfg")
+return
+end
+
+local url = "https://raw.githubusercontent.com/wuxiangdong/Test/master/"
+local index = {} --programs
+local need = {}
+
+
+
+--Not finsh
