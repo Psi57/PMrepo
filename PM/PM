@@ -3,6 +3,11 @@ if not http then
     printError("Http is disabled,please set http_enable to true in ComputerCraft.cfg")
     return
 end
+--".information" preservation information of program that installed by PM
+if not fs.isDir (".information") then
+    fs.makeDir(".information")
+    print("PS:.information is a important dir of PM,Don't delete or modify it.Thanks.")
+end
 
 local url = "https://raw.githubusercontent.com/wuxiangdong/PMrero/master/"
 local index = {} --programs
