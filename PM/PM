@@ -68,4 +68,42 @@ local function install(name)
         
     end
 end
---Not finsh
+local function help()
+    print("Usages:")
+    print("index: show the list of files name")
+    print("install <filename>: install the file to local")
+    print("exit: exit this program")
+    print("Thank xia for opening his program")
+end
+while true do
+    local input = ""
+    io.write("#")
+    input = read()
+    local location = string.find(input , " ")
+    local parameter = string.sub(input, location + 1)
+    local command = string.sub(input, 1,location - 1)
+    if location then
+        if(command == "install")then
+            if(fs.exists(parameter))then
+                print(parameter .. " is installed,Do you want to reinstall it?(Y/N)")
+                input=read()
+                if(input=="Y" or input=="y")then
+                    install(parameter)
+                end
+            else install(parameter) end
+        end
+    elseif(input=="index")then
+        print("")
+        print(index)
+    elseif(input=="help")then
+        print("")
+        help()
+    elseif(input=="exit")then
+        print("goodbye!")
+        return
+    else
+        print(input .. "is not a command")
+        print("Try input \"help\"")
+    end
+end
+--version 0.1
