@@ -46,6 +46,11 @@ local function install(name)
                 printError("Install unsuccessfully.Dependency of " .. name .. "can't install.")
                 return false
             end
+            local r1 = http.get(url .. name .. "/version")
+            local f1 =fs.open(".information/" .. text,"w")
+            f1.write(r1.readAll() .. " dependency")
+            f1.close()
+            r1.close()
             text = response.readLine()
         end
         response.close()
@@ -54,6 +59,11 @@ local function install(name)
         f.write(response.readAll())
         f.close()
         response.close()
+        response = http.get(url .. name .. "/version")
+        f =fs.open(".information/" .. text,"w")
+        f.write(r1.readAll())
+        f.close()
+        response.close()        
         return true
         
     end
