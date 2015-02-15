@@ -10,6 +10,7 @@ if not fs.isDir (".information") then
 end
 
 local url = "https://raw.githubusercontent.com/wuxiangdong/PMrero/master/"
+local index1 = ""
 local index = {} --programs
 local need = {}
 
@@ -40,18 +41,20 @@ end
 local function install(name)
     if(index[name]) then 
         local response = http.get(url .. name .. "/need")
-        local text = response.readLine()
-        while text ~= EOF do 
-            if not install (text) then
-                printError("Install unsuccessfully.Dependency of " .. name .. "can't install.")
-                return false
+        if  response then 
+            local text = response.readLine()
+            while text ~= EOF do 
+                if not install (text) then
+                    printError("Install unsuccessfully.Dependency of " .. name .. "can't install.")
+                    return false
+                end
+                local r1 = http.get(url .. name .. "/version")
+                local f1 =fs.open(".information/" .. text,"w")
+                f1.write(r1.readAll() .. " dependency")
+                f1.close()
+                r1.close()
+                text = response.readLine()
             end
-            local r1 = http.get(url .. name .. "/version")
-            local f1 =fs.open(".information/" .. text,"w")
-            f1.write(r1.readAll() .. " dependency")
-            f1.close()
-            r1.close()
-            text = response.readLine()
         end
         response.close()
         response = http.get(url .. name .. "/" .. name)
@@ -80,18 +83,18 @@ while true do
     io.write("#")
     input = read()
     local location = string.find(input , " ")
-    local parameter = string.sub(input, location + 1)
-    local command = string.sub(input, 1,location - 1)
     if location then
-        if(command == "install")then
-            if(fs.exists(parameter))then
-                print(parameter .. " is installed,Do you want to reinstall it?(Y/N)")
-                input=read()
-                if(input=="Y" or input=="y")then
-                    install(parameter)
-                end
-            else install(parameter) end
-        end
+        local parameter = string.sub(input, location + 1)
+        local command = string.sub(input, 1,location - 1)
+            if(command == "install")then
+                if(fs.exists(parameter))then
+                    print(parameter .. " is installed,Do you want to reinstall it?(Y/N)")
+                    input=read()
+                    if(input=="Y" or input=="y")then
+                        install(parameter)
+                    end
+                else install(parameter) end
+            end
     elseif(input=="index")then
         print("")
         print(index)
