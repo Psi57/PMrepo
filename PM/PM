@@ -24,6 +24,7 @@ local function init()
     end
     text = response.readLine()
     while text ~= EOF do
+        index1 = index1 .. " " .. text
         index[text] = true
         text = response.readLine()
     end
@@ -40,19 +41,21 @@ end
 
 local function install(name)
     if(index[name]) then 
+        if (fs.exists(name))then
+            print(name .. " is installed,Do you want to reinstall it?(Y/N)(Y)")
+            local input=read()
+            if(input=="N" or input=="n")then
+                return true
+            end            
+        end
         local response = http.get(url .. name .. "/need")
-        if  response then 
+        if not response then 
             local text = response.readLine()
             while text ~= EOF do 
                 if not install (text) then
                     printError("Install unsuccessfully.Dependency of " .. name .. "can't install.")
                     return false
                 end
-                local r1 = http.get(url .. name .. "/version")
-                local f1 =fs.open(".information/" .. text,"w")
-                f1.write(r1.readAll() .. " dependency")
-                f1.close()
-                r1.close()
                 text = response.readLine()
             end
         end
@@ -63,13 +66,12 @@ local function install(name)
         f.close()
         response.close()
         response = http.get(url .. name .. "/version")
-        f =fs.open(".information/" .. text,"w")
-        f.write(r1.readAll())
+        f =fs.open(".information/" .. name,"w")
+        f.write(response.readAll())
         f.close()
         response.close()        
         return true
-        
-    end
+    else printError(name .. " can't found.") end
 end
 local function help()
     print("Usages:")
@@ -87,25 +89,20 @@ while true do
         local parameter = string.sub(input, location + 1)
         local command = string.sub(input, 1,location - 1)
             if(command == "install")then
-                if(fs.exists(parameter))then
-                    print(parameter .. " is installed,Do you want to reinstall it?(Y/N)")
-                    input=read()
-                    if(input=="Y" or input=="y")then
-                        install(parameter)
-                    end
-                else install(parameter) end
+                install (parameter)
+            else
+                printError(input .. "is not a command")
+                print("Try input \"help\"")
             end
     elseif(input=="index")then
-        print("")
-        print(index)
+        print(index1)
     elseif(input=="help")then
-        print("")
         help()
     elseif(input=="exit")then
         print("goodbye!")
         return
     else
-        print(input .. "is not a command")
+        printError(input .. "is not a command")
         print("Try input \"help\"")
     end
 end
