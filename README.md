@@ -1,8 +1,4 @@
-# PMrepo
-Thank you for using it.
-
-If you have good ideas or codes of ComputerCraft to share,please email me at w15607911028@outlook.com.
-
-Thank you!
-
-(all of the program on the repository is GPLv2)
+# PMrepo -- A package manager for minecraft computercraft
+It's a package manager for computercraft
+command:
+PM (install help)
